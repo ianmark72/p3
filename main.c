@@ -1,14 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-int main() {
+int main(int argc, char *argv[]) {
 	FILE *fp;
 	char Makefile[] = "Makefile";
 	char makefile[] = "makefile";
-	
-	fp = fopen(Makefile, "r");
+	char* target;
+
+	if(argc == 2) {
+		strncpy(target, argv[1]);
+	}else if(argc > 2) {
+		perror("Too many arguments. Limit of one target.");
+		exit(0);
+	}
+
+	fp = fopen(makefile, "r");
 	if(fp == NULL) {
-		fp = fopen(makefile, "r");
+		fp = fopen(Makefile, "r");
 		if(fp == NULL) {
 			perror("No makefile found.");
 			exit(0);
