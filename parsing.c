@@ -17,19 +17,15 @@
 #include <pthread.h>
 
 /**
- *  This method reads in lines from stdin and parse through them.
- *  It puts the strings in the queue.
- *
- *  Parameters: q - The queue that the strings are being passed to.
+ *  This method reads in lines from make and parse through them.
+ *  
  *
  *  Return: void* - NULL, nothing of value.
  */
 void* read(void* q) {
-        //Cast queue from void*.
-        Queue* queue = (Queue*) q;
         //Buffer max size.
         const int BUF_SIZE = 1024;
-        //String pointer to be passed into queues.
+        //String pointer.
         char* string;
         //Next character input from std input.
         char input;
@@ -83,7 +79,6 @@ void* read(void* q) {
                                         strncpy(string, buffer, BUF_SIZE);
                                 }
                                 if(string == NULL) { fprintf(stderr, "error strncpy");}
-                                EnqueueString(queue, string);
 
                                 if(buffer != NULL) {
                                         memset(buffer, 0, BUF_SIZE);
@@ -104,12 +99,8 @@ void* read(void* q) {
                                         if(string != NULL && buffer != NULL) {
                                                 strncpy(string, buffer, BUF_SIZE);
                                         }
-                                        if(string == NULL) { fprintf(stderr, "error strncpy");}
-                                        EnqueueString(queue, string);
+                                        if(string == NULL) { fprintf(stderr, "error strncpy");
                                 }
-                                //Enqueue null pointer.
-                                string = NULL;
-                                EnqueueString(queue, string);
                         }
                 }
         } while ( input != EOF);
