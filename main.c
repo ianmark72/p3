@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <parsing1.h>
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
@@ -25,5 +26,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	//Pass to parsing.
+	read(fp);
 }
 

@@ -22,7 +22,7 @@
  *
  *  Return: void* - NULL, nothing of value.
  */
-void* read(void* q) {
+void read(FILE* q) {
 	const int BUF_SIZE = 1024;
 	int type = -1; //type of line, 0 if cmd 1 if target, 2 if blank
        // First, read through line and store as string
@@ -44,5 +44,5 @@ void* read(void* q) {
       }
       else { printf("error"); }
 
-
+	printf("%i", type);
 }
