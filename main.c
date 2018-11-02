@@ -1,16 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <parsing1.h>
+#include "parsing1.h"
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
 	char Makefile[] = "Makefile";
-	char makefile[] = "makefile";
+	char makefile[] = "testmakefile";
 	char* target;
 
+	target = "";
 	if(argc == 2) {
-		strncpy(target, argv[1]);
+		strncpy(target, argv[1], 100);
 	}else if(argc > 2) {
 		perror("Too many arguments. Limit of one target.");
 		exit(0);
