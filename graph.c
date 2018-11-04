@@ -9,22 +9,29 @@ typedef struct listNode {
 
 typedef struct graphNode {
 	char* name;
-	char* command;
+	int arrayPos;
+	char** command;
 	listNode* parentListStart;
 	listNode* parentListEnd;
 	listNode* childListStart;
 	listNode* childListEnd;
 }graphNode;
 
-graphNode CreateGraphNode(char* nameP, char* commandP) {
+graphNode CreateGraphNode(char* nameP) {
 	const int numOfNodes = 1;
 
 	graphNode* gn = calloc(numOfNodes, sizeof(graphNode));
-
+	
+	gn->arrayPos = 0;
 	graphNode->name = nameP;
-	graphNode->command = commandP;
+	graphNode->command = calloc(10, sizeof(char*));
 
 	return gn;
+}
+
+void addCommand(graphNode* gn, char* commandP) {
+	gn->command[gn->arrayPos] = commandP;
+	gn->arrayPos++;
 }
 
 void addParent(graphNode* gn, char* newParent) {

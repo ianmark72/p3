@@ -8,6 +8,8 @@ int main(int argc, char *argv[]) {
 	char Makefile[] = "Makefile";
 	char makefile[] = "testmakefile";
 	char* target;
+	//lines* linesArray; 
+	//int length;
 
 	target = "";
 	if(argc == 2) {
@@ -27,6 +29,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	//Pass to parsing.
-	read(fp);
+	//linesArray = read(fp);
+	//length =  sizeof(linesArray)/sizeof(linesArray[0]);
+	
+	//for(int i = 0; i < length; i++) {
+	//	printf("struct content: %i,%s\n",linesArray[i].type,linesArray[i].line);
+	//}
 }
 
