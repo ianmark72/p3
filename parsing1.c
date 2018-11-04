@@ -33,16 +33,21 @@ lines* read(FILE* q) {
 
 	// First, read through line and store as string
        	char input  = ' ';
-       	char* line = calloc(sizeof(char), BUF_SIZE);
-       	char* buffer = calloc(sizeof(char), BUF_SIZE);
-       	lines* linesArray = (lines*)calloc(sizeof(lines), 50); 
+       	char* line = calloc(BUF_SIZE, sizeof(char));
+       	char* buffer = calloc(BUF_SIZE, sizeof(char));
+       	lines* linesArray = (lines*)calloc(50, sizeof(lines)); 
        	input = getc(q);
 
        	int ctr = 0;
        	int lineNum =0;
 	graphNode* curGN;
-	graphNode** nodeArray = calloc(sizeof(graphNode*), 20);
+	graphNode** nodeArray = calloc(20, sizeof(graphNode*));
 	graphArrayCtr = 0;
+	char* nextString;
+	char colon = ':';
+	char* substringBC;
+	char* substringAC;
+	char** dependencies = calloc(20, sizeof(char*));
 
        	while (lineNum < 50 && input != EOF) {
        		while( input != EOF && input != '\n' ) {
@@ -79,16 +84,47 @@ lines* read(FILE* q) {
 
 	for(int i = 0; i < lineNum; i++) {
 		if(linesArray[i]->type == 0) {
-			
-			while() {
-				//parse line
+			//Create new node in the array.
+			nodeArray[graphArrayCtr] = (graphNode*)calloc(1, sizeof(graphNode*));
+			nextString = calloc(50, sizeof(char*));
+			substringBC = calloc(50, sizeof(char*));
+			substringAC = calloc(50, sizeof(char*));
+			int ssctr = 0;
+
+			//Read through the string of the make file.
+			for(int j = 0; j < strlen(nextString); j++){
+				//Read until colon marker.
+				while(nextString[j] != colon) {
+					substringBC[j] = nextString[j]; 
+					j++;
+				}
+				//Read the rest into another string.
+				if(nextString[j] != colon){
+					substringAC[ssctr];
+					ssctr++;
+				}
 			}
-			nodeArray[graphArrayCtr] = CreateGraphNode();
+			
+			//Split the second part of the string into an array.
+			dependencies = strtok(substringAC);
+
+			nodeArray[graphArrayCtr] = CreateGraphNode(substring);
+
+			//Add dependencies to child list of node.
+			for(int k = 0; k < sizeof(dependencies)/sizeof(dependencies[0]); k++) {
+				addChild(nodeArray[graphArrayCtr], dependencies[k]);
+			}
+
 			curGN = nodeArray[graphArrayCtr];
 			graphArrayCtr++;
 		}else{
 			//Get rid of the tab.
 			linesArray[i]->line++;
+			//Check to make sure that the first line isn't a command.
+			if(curGN == NULL) {
+				perror("Command without a target.");
+				exit(0);
+			}
 			addCommand(curGN, linesArray[i]);
 		}
 	}
