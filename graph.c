@@ -3,38 +3,38 @@
 #include <string.h>
 
 typedef struct listNode {
-	listNode* child;
+	struct listNode* child;
 	char* string;
-}
+}listNode;
 
 typedef struct graphNode {
 	char* name;
 	int arrayPos;
 	char** command;
-	listNode* parentListStart;
-	listNode* parentListEnd;
-	listNode* childListStart;
-	listNode* childListEnd;
+	struct listNode* parentListStart;
+	struct listNode* parentListEnd;
+	struct listNode* childListStart;
+	struct listNode* childListEnd;
 }graphNode;
 
-graphNode CreateGraphNode(char* nameP) {
+struct graphNode* CreateGraphNode(char* nameP) {
 	const int numOfNodes = 1;
 
 	graphNode* gn = calloc(numOfNodes, sizeof(graphNode));
 	
 	gn->arrayPos = 0;
-	graphNode->name = nameP;
-	graphNode->command = calloc(10, sizeof(char*));
+	gn->name = nameP;
+	gn->command = calloc(10, sizeof(char*));
 
 	return gn;
 }
 
-void addCommand(graphNode* gn, char* commandP) {
+void addCommand(struct graphNode* gn, char* commandP) {
 	gn->command[gn->arrayPos] = commandP;
 	gn->arrayPos++;
 }
 
-void addParent(graphNode* gn, char* newParent) {
+void addParent(struct graphNode* gn, char* newParent) {
 	const int numOfNodes = 1;
 
 	listNode* newLN = calloc(numOfNodes, sizeof(graphNode));
@@ -49,7 +49,7 @@ void addParent(graphNode* gn, char* newParent) {
 	}
 }
 
-void addChild(graphNode* gn, char* newChild) {
+void addChild(struct graphNode* gn, char* newChild) {
 	const int numOfNodes = 1;
 
         listNode* newLN = calloc(numOfNodes, sizeof(graphNode));

@@ -27,7 +27,7 @@ typedef struct lines {
 	char* line;
 } lines;
 
-lines* read(FILE* q) {
+struct graphNode** read(FILE* q) {
 	const int BUF_SIZE = 1024;
 	int type = -1; //type of line, 0 if cmd 1 if target, 2 if blank
 
@@ -42,17 +42,18 @@ lines* read(FILE* q) {
        	int lineNum =0;
 	graphNode* curGN;
 	graphNode** nodeArray = calloc(20, sizeof(graphNode*));
-	graphArrayCtr = 0;
+	int graphArrayCtr = 0;
 	char* nextString;
 	char colon = ':';
 	char* substringBC;
 	char* substringAC;
 	char** dependencies = calloc(20, sizeof(char*));
+	const char* space = (char*)' ';
 
        	while (lineNum < 50 && input != EOF) {
        		while( input != EOF && input != '\n' ) {
 			if(ctr == 1024) {
-				perror("%i: Invalid Line: %s", lineNum, buffer);
+				printf("%i: Invalid Line: %s", lineNum, buffer);
 				exit(0);
 			}
 			buffer[ctr] = input;
@@ -83,7 +84,7 @@ lines* read(FILE* q) {
        	}
 
 	for(int i = 0; i < lineNum; i++) {
-		if(linesArray[i]->type == 0) {
+		if(linesArray[i].type == 0) {
 			//Create new node in the array.
 			nodeArray[graphArrayCtr] = (graphNode*)calloc(1, sizeof(graphNode*));
 			nextString = calloc(50, sizeof(char*));
@@ -92,7 +93,7 @@ lines* read(FILE* q) {
 			int ssctr = 0;
 
 			//Read through the string of the make file.
-			for(int j = 0; j < strlen(nextString); j++){
+			for(size_t j = 0; j < strnlen(nextString, BUF_SIZE); j++){
 				//Read until colon marker.
 				while(nextString[j] != colon) {
 					substringBC[j] = nextString[j]; 
@@ -100,18 +101,23 @@ lines* read(FILE* q) {
 				}
 				//Read the rest into another string.
 				if(nextString[j] != colon){
-					substringAC[ssctr];
+					substringAC[ssctr] = nextString[j];
 					ssctr++;
 				}
 			}
 			
-			//Split the second part of the string into an array.
-			dependencies = strtok(substringAC);
+			//Split the second part of the string into an arrayi.
+			int dCtr = 0;
+			dependencies[dCtr] = strtok(substringAC, space);
+			while(substringAC != NULL) {
+				dependencies[dCtr] = strtok(NULL, space);
+				dCtr++;
+			}
 
-			nodeArray[graphArrayCtr] = CreateGraphNode(substring);
+			nodeArray[graphArrayCtr] = CreateGraphNode(substringBC);
 
 			//Add dependencies to child list of node.
-			for(int k = 0; k < sizeof(dependencies)/sizeof(dependencies[0]); k++) {
+			for(size_t k = 0; k < sizeof(dependencies)/sizeof(dependencies[0]); k++) {
 				addChild(nodeArray[graphArrayCtr], dependencies[k]);
 			}
 
@@ -119,15 +125,15 @@ lines* read(FILE* q) {
 			graphArrayCtr++;
 		}else{
 			//Get rid of the tab.
-			linesArray[i]->line++;
+			linesArray[i].line++;
 			//Check to make sure that the first line isn't a command.
 			if(curGN == NULL) {
 				perror("Command without a target.");
 				exit(0);
 			}
-			addCommand(curGN, linesArray[i]);
+			addCommand(curGN, linesArray[i].line);
 		}
 	}
 
-	return linesArray;
+	return nodeArray;
 }
