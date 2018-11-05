@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parsing1.h"
+#include "graph.h"
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
 	char Makefile[] = "Makefile";
 	char makefile[] = "testmakefile";
 	char* target;
-	//lines* linesArray; 
-	//int length;
+	struct graphNode** depenGraph;
 
 	target = "";
 	if(argc == 2) {
@@ -29,11 +29,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	//Pass to parsing.
-	//linesArray = read(fp);
-	//length =  sizeof(linesArray)/sizeof(linesArray[0]);
+	depenGraph = read(fp);
 	
-	//for(int i = 0; i < length; i++) {
-	//	printf("struct content: %i,%s\n",linesArray[i].type,linesArray[i].line);
-	//}
 }
 

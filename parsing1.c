@@ -83,52 +83,106 @@ struct graphNode** read(FILE* q) {
       		input = getc(q);
        	}
 
+	printf("Before graph creation.\n");
+
 	for(int i = 0; i < lineNum; i++) {
-		if(linesArray[i].type == 0) {
+		printf("inside the line loop.\n");
+		printf("The line is of type: %i and contains string: %s\n", linesArray[i].type, linesArray[i].line);
+		if(linesArray[i].type == 1) {
+			printf("Target line.\n");
 			//Create new node in the array.
 			nodeArray[graphArrayCtr] = (graphNode*)calloc(1, sizeof(graphNode*));
-			nextString = calloc(50, sizeof(char*));
+			nextString = linesArray[i].line;
+			printf("%s\n", nextString);
 			substringBC = calloc(50, sizeof(char*));
 			substringAC = calloc(50, sizeof(char*));
-			int ssctr = 0;
+			int ssCtr = 0;
+			int strCtr = 0;
 
-			//Read through the string of the make file.
-			for(size_t j = 0; j < strnlen(nextString, BUF_SIZE); j++){
-				//Read until colon marker.
-				while(nextString[j] != colon) {
-					substringBC[j] = nextString[j]; 
-					j++;
-				}
-				//Read the rest into another string.
-				if(nextString[j] != colon){
-					substringAC[ssctr] = nextString[j];
-					ssctr++;
-				}
+			printf("After initialization.\n");
+
+			//Read until colon marker.
+                        while(nextString[strCtr] != colon || nextString[strCtr] != '\0') {
+                                substringBC[strCtr] = nextString[strCtr];
+                        	strCtr++;
+                        }
+			if(nextString[strCtr] == '\0'){
+				perror("Error: Invalid target line.\n");
+                                exit(0);
 			}
+			//Pass over the colon.
+			strCtr++;
+
+			printf("Colon split.\n");
+
+			//Read through the rest of the string after the colon.
+			while(nextString[strCtr] != colon || nextString[strCtr] != '\0') {
+				//Read the rest into another string.
+				substringAC[ssCtr] = nextString[strCtr];
+				strCtr++;
+				ssCtr++;
+			}
+			if(nextString[strCtr] == colon) {
+				perror("Error: Too many targets.");
+				exit(0);
+			}	
+
+			printf("After string splitting.\n");
 			
-			//Split the second part of the string into an arrayi.
+			//Split the second part of the string into an array.
 			int dCtr = 0;
 			dependencies[dCtr] = strtok(substringAC, space);
 			while(substringAC != NULL) {
 				dependencies[dCtr] = strtok(NULL, space);
 				dCtr++;
 			}
+	
+			printf("After dependencies split.\n");
 
 			nodeArray[graphArrayCtr] = CreateGraphNode(substringBC);
+
+			printf("After node creation.\n");
 
 			//Add dependencies to child list of node.
 			for(size_t k = 0; k < sizeof(dependencies)/sizeof(dependencies[0]); k++) {
 				addChild(nodeArray[graphArrayCtr], dependencies[k]);
 			}
+			
+			printf("After dependencies added.\n");
+
+			//Search through graphnode's children to find parents.
+			for(int l = 0; l < graphArrayCtr; l++) {
+				struct listNode* curNode;
+				if(nodeArray[l]->childListStart != NULL) {
+					curNode = nodeArray[l]->childListStart;
+				}
+
+				//Cycle through children and find matching names.
+				while(curNode->child != NULL) {
+					if(strcmp(curNode->string, nodeArray[graphArrayCtr]->name) == 0){
+						addParent(nodeArray[graphArrayCtr], curNode->string);
+					}
+				}	
+				//Make sure to check the last node.
+				if(curNode != NULL){
+					if(strcmp(curNode->string, nodeArray[graphArrayCtr]->name) == 0){
+                                                addParent(nodeArray[graphArrayCtr], curNode->string);
+                                        }
+				}
+			}
+
+			printf("After node parents are found.\n");
 
 			curGN = nodeArray[graphArrayCtr];
 			graphArrayCtr++;
-		}else{
+		}else if(linesArray[i].type == 0) {
+			printf("Command Line.\n");
+
 			//Get rid of the tab.
 			linesArray[i].line++;
 			//Check to make sure that the first line isn't a command.
 			if(curGN == NULL) {
-				perror("Command without a target.");
+				perror("Command without a target.\n");
 				exit(0);
 			}
 			addCommand(curGN, linesArray[i].line);
