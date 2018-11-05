@@ -83,6 +83,8 @@ struct graphNode** read(FILE* q) {
       		input = getc(q);
        	}
 
+
+
 	printf("Before graph creation.\n");
 
 	for(int i = 0; i < lineNum; i++) {
@@ -98,25 +100,31 @@ struct graphNode** read(FILE* q) {
 			substringAC = calloc(50, sizeof(char*));
 			int ssCtr = 0;
 			int strCtr = 0;
+			int strLength = (unsigned)strnlen(nextString, BUF_SIZE);
 
 			printf("After initialization.\n");
 
 			//Read until colon marker.
-                        while(nextString[strCtr] != colon || nextString[strCtr] != '\0') {
+                        while(nextString[strCtr] != colon && strCtr < strLength) {
                                 substringBC[strCtr] = nextString[strCtr];
                         	strCtr++;
                         }
-			if(nextString[strCtr] == '\0'){
+			if(nextString[strCtr] != colon && strCtr + 1 >= strLength){
 				perror("Error: Invalid target line.\n");
                                 exit(0);
 			}
+
 			//Pass over the colon.
-			strCtr++;
+			if(strCtr + 1 != strLength ) {
+				strCtr++;
+			}
+			
+			printf("strCtr: %i, strLength: %i\n", strCtr, strLength);
 
 			printf("Colon split.\n");
 
 			//Read through the rest of the string after the colon.
-			while(nextString[strCtr] != colon || nextString[strCtr] != '\0') {
+			while(nextString[strCtr] != colon || strCtr < strLength) {
 				//Read the rest into another string.
 				substringAC[ssCtr] = nextString[strCtr];
 				strCtr++;
