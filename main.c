@@ -3,17 +3,18 @@
 #include <string.h>
 #include "parsing1.h"
 #include "graph.h"
+#include "runTarget.h"
+#include "checkCycles.h"
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
 	char Makefile[] = "Makefile";
 	char makefile[] = "testmakefile";
-	char* target;
 	struct graphNode** depenGraph;
-
-	target = "";
+	int arg = 0;
+	
 	if(argc == 2) {
-		strncpy(target, argv[1], 100);
+		arg = 1;
 	}else if(argc > 2) {
 		perror("Too many arguments. Limit of one target.");
 		exit(0);
@@ -31,6 +32,16 @@ int main(int argc, char *argv[]) {
 	//Pass to parsing.
 	depenGraph = read(fp);
 	
+	//Check for cycles.
+	checkCycles(depenGraph);
+
+	//Pass the specific target to build.
+	if(argc == 2) {
+		runTarget(depenGraph, argv[arg]);
+	}else{
+		runTarget(depenGraph, NULL);
+	}
+
 	//Testing graph, DO NOT DELETE
 	int a = 0;
 	while(depenGraph[a] != NULL) {
