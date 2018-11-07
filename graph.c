@@ -19,7 +19,6 @@ typedef struct graphNode {
 
 struct graphNode* CreateGraphNode(char* nameP) {
 	const int numOfNodes = 1;
-
 	graphNode* gn = calloc(numOfNodes, sizeof(graphNode));
 	
 	gn->arrayPos = 0;
@@ -51,7 +50,6 @@ void addParent(struct graphNode* gn, char* newParent) {
 
 void addChild(struct graphNode* gn, char* newChild) {
 	const int numOfNodes = 1;
-
         listNode* newLN = calloc(numOfNodes, sizeof(graphNode));
         newLN->string = newChild;
 
