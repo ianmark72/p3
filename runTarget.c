@@ -1,49 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include "graph.h"
 
-void checkDependencies(graphNode** gN, graphNode** sA, listNode* curLN, int ctr) {
+void checkDependencies(graphNode** gN, graphNode* curGN) {
         int i = 0;
 	int target = 0;
+	struct stat* statBuf;
+	int newestUpdate;
 
-	//Cycle through nodes.
-        while(gN[i] != NULL) {
-		//Check if depencies is a target.
-        	if(strcmp(gN[i]->name, curLN->string) == 0) {
-			//Get depencies.
-                        getDependencies(gN, sA, gN[i]->childListStart, ctr);
-			target = 1;
-			break;
-                }
-                i++;
-        }
+	do{
+		if(curGN->childListStart != NULL) {
+			listNode* curLN = curGN->childListStart;
 
-	//
-	if(target == 1) {
-		//Check stat
-	}
+			//Cycle through nodes.
+        		while(gN[i] != NULL) {
+				//Check if dependencies is a target.
+        			if(strcmp(gN[i]->name, curLN->string) == 0) {
+					//Get dependencies.
+                        		getDependencies(gN, gN[i]);
 
-        while(curLN->child != NULL) {
-                i = 0;
-                curLN = curLN->child;
+					FILE* fp = fopen(gN[i]->name, "r");
+					if(fp == NULL) {
+						int z = 0;
+                				while(gN[i]->command[z] != NULL) {
+                        				execute(gN[i]->command[z]);
+                        				z++;
+                				}
+					}else{
+						stat(gN[i]->name, &statBuf);
+                        			if(newestUpdate > statBuf.st_mtime) {
+                		                	newestUpdate = statBuf.st_mtime;
+		                        	}
+					}
 
-                while(gN[i] != NULL) {
-                        if(strcmp(gN[i]->name, curLN->string) == 0) {
-                                for(int j = 0; j < ctr; j++) {
-                                        if(strcmp(curLN->string, sA[j]->name) == 0) {
-                                                perror("Error: Cycle Detected.\n");
-                                                exit(0);
-                                        }
-                                }
+					target = 1;
+					break;
+                		}
+                		i++;
+        		}
 
-                                sA[ctr] = gN[i];
-                                ctr++;
-                                getChildren(gN, sA, gN[i]->childListStart, ctr);
-                        }
-                        i++;
-                }
-        }
+			//If target is not a node.
+			if(target == 0) {
+				stat(curLN->string, &statBuf);
+				if(newestUpdate > statBuf.st_mtime) {
+					newestUpdate = statBuf.st_mtime;
+				}
+			}
+		}else{
+			int z = 0;
+			while(gN[i]->command[z] != NULL) {
+				execute(gN[i]->command[z]);
+				z++;
+			}
+		}
+		curLN = curLN->child;
+	}while(curLN != NULL);
 }
 
 
@@ -67,4 +82,6 @@ void runTarget(graphNode** gN, char* target) {
 	}else{
 		curGN = gN[0];
 	}
+
+	checkDependencies(gN, curGN);
 }
