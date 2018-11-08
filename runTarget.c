@@ -5,23 +5,26 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "graph.h"
+#include "cmdLine.h"
 
 void checkDependencies(graphNode** gN, graphNode* curGN) {
         int i = 0;
 	int target = 0;
-	struct stat* statBuf;
+	struct stat statBuf;
 	int newestUpdate;
+	int noDependencies = 0;
+	listNode* curLN;
 
 	do{
 		if(curGN->childListStart != NULL) {
-			listNode* curLN = curGN->childListStart;
+			curLN = curGN->childListStart;
 
 			//Cycle through nodes.
         		while(gN[i] != NULL) {
 				//Check if dependencies is a target.
         			if(strcmp(gN[i]->name, curLN->string) == 0) {
 					//Get dependencies.
-                        		getDependencies(gN, gN[i]);
+                        		checkDependencies(gN, gN[i]);
 
 					FILE* fp = fopen(gN[i]->name, "r");
 					if(fp == NULL) {
@@ -56,9 +59,21 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 				execute(gN[i]->command[z]);
 				z++;
 			}
+			noDependencies = 1;
 		}
 		curLN = curLN->child;
 	}while(curLN != NULL);
+
+	if(noDependencies == 0) {
+		stat(curGN->name, &statBuf);
+
+		if(newestUpdate < statBuf.st_mtime) {
+			int y = 0;
+			while(curGN->command[y]) {
+				execute(curGN->command[y]);
+			}
+		}
+	}
 }
 
 
