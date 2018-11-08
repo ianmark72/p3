@@ -111,13 +111,15 @@ struct graphNode** reader(FILE* q) {
 			type = 2;
       		}
       		else { fprintf(stderr, "error typing\n"); }
+			if( type != 2 ) {
       		struct lines tmp;
-		tmp.type = type;
-		tmp.line = line;
+			tmp.type = type;
+			tmp.line = line;
       		linesArray[lineNum] = tmp;
       		//printf("%i",lineNum);
       		//printf("struct content: %i,%s\n",linesArray[lineNum].type,linesArray[lineNum].line);
-      		lineNum++;
+			}
+			lineNum++;
       		memset(buffer, 0, BUF_SIZE);
       		input = getc(q);
        	}
