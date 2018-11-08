@@ -4,16 +4,17 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "graph.h"
+#include "graphBuilder.h"
 #include "cmdLine.h"
 
 void checkDependencies(graphNode** gN, graphNode* curGN) {
         int i = 0;
 	int target = 0;
+	int done = 0;
 	struct stat statBuf;
 	int newestUpdate;
 	int noDependencies = 0;
-	listNode* curLN;
+	listNode* curLN = NULL;
 
 	do{
 		if(curGN->childListStart != NULL) {
@@ -54,15 +55,19 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 				}
 			}
 		}else{
-			int z = 0;
-			while(gN[i]->command[z] != NULL) {
+			for(int z = 0; z < gN[i]->commandSize; z++) {
 				execute(gN[i]->command[z]);
-				z++;
 			}
 			noDependencies = 1;
+			done = 1;
+			continue;
 		}
-		curLN = curLN->child;
-	}while(curLN != NULL);
+		if(curLN->child != NULL) {
+			curLN = curLN->child;
+		}else{
+			done = 1;
+		}
+	}while(done != 1);
 
 	if(noDependencies == 0) {
 		stat(curGN->name, &statBuf);

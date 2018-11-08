@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parsing1.h"
-#include "graph.h"
+#include "graphBuilder.h"
 #include "runTarget.h"
 #include "checkCycles.h"
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
 	char Makefile[] = "Makefile";
-	char makefile[] = "testmakefile";
+	char makefile[] = "testmakefile2";
 	struct graphNode** depenGraph;
 	int arg = 0;
 	
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	//Pass to parsing.
-	depenGraph = read(fp);
+	depenGraph = reader(fp);
 	
 	//Check for cycles.
 	checkCycles(depenGraph);

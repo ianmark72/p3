@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
-#include "graph.h"
+#include "graphBuilder.h"
 
 /**
  *  This method reads in lines from make and parse through them.

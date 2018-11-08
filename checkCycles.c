@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "graph.h"
+#include "graphBuilder.h"
 
 void getChildren(graphNode** gN, graphNode** sA, listNode* curLN, int ctr) {
 	int i = 0;
