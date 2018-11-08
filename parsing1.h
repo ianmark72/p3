@@ -1,6 +1,7 @@
+#include <stdio.h>
 typedef struct lines {
         int type;
         char* line;
 } lines;
-
-struct graphNode** read(FILE*);
+char** stringSplit(char* string);
+struct graphNode** reader(FILE*);

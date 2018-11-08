@@ -66,7 +66,7 @@ char** stringSplit(char* string) {
 	return stringArray;
 }
 
-struct graphNode** read(FILE* q) {
+struct graphNode** reader(FILE* q) {
 	const int BUF_SIZE = 1024;
 	int type = -1; //type of line, 0 if cmd 1 if target, 2 if blank
 
