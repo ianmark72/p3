@@ -17,6 +17,7 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 	listNode* curLN = NULL;
 
 	do{
+		printf("%s\n", curGN->name);
 		if(curGN->childListStart != NULL) {
 			curLN = curGN->childListStart;
 
@@ -27,20 +28,11 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 					//Get dependencies.
                         		checkDependencies(gN, gN[i]);
 
-					FILE* fp = fopen(gN[i]->name, "r");
-					if(fp == NULL) {
-						int z = 0;
-                				while(gN[i]->command[z] != NULL) {
-                        				execute(gN[i]->command[z]);
-                        				z++;
-                				}
-					}else{
-						stat(gN[i]->name, &statBuf);
-                        			if(newestUpdate > statBuf.st_mtime) {
-                		                	newestUpdate = statBuf.st_mtime;
-		                        	}
-					}
-
+					stat(gN[i]->name, &statBuf);
+                        		if(newestUpdate > statBuf.st_mtime) {
+                		               	newestUpdate = statBuf.st_mtime;
+		                        }
+					
 					target = 1;
 					break;
                 		}
@@ -49,7 +41,14 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 
 			//If target is not a node.
 			if(target == 0) {
-				stat(curLN->string, &statBuf);
+				//printf("Checking file: %s\n", curLN->string);
+				int err;
+				err = stat(curLN->string, &statBuf);
+				if(err == -1) {
+					perror("No file found.");
+					exit(0);
+				}
+				//printf("Before time check.\n");
 				if(newestUpdate > statBuf.st_mtime) {
 					newestUpdate = statBuf.st_mtime;
 				}
@@ -62,20 +61,31 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 			done = 1;
 			continue;
 		}
-		if(curLN->child != NULL) {
+		
+		if(strcmp(curGN->childListEnd->string, curLN->string) != 0) {
 			curLN = curLN->child;
 		}else{
 			done = 1;
 		}
+		
 	}while(done != 1);
-
+	
 	if(noDependencies == 0) {
-		stat(curGN->name, &statBuf);
+		FILE* fp = fopen(curGN->name, "r");
+                if(fp == NULL) {
+                  	int z = 0;
+                        while(curGN->command[z] != NULL) {
+                             	execute(gN[i]->command[z]);
+                        	z++;
+                	}
+		}else{
+			stat(curGN->name, &statBuf);
 
-		if(newestUpdate < statBuf.st_mtime) {
-			int y = 0;
-			while(curGN->command[y]) {
-				execute(curGN->command[y]);
+			if(newestUpdate < statBuf.st_mtime) {
+				int y = 0;
+				while(curGN->command[y]) {
+					execute(curGN->command[y]);
+				}
 			}
 		}
 	}

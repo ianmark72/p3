@@ -27,8 +27,27 @@ typedef struct lines {
 	char* line;
 } lines;
 
+char* trim(char* string) {
+	size_t oldCtr = 0;
+	size_t newCtr = 0;
+	const int BUF_SIZE = 1024;
+	char* newString = calloc(50, sizeof(char*));
+
+	while(oldCtr < (unsigned)strnlen(string, BUF_SIZE)) {
+		if(string[oldCtr] == ' ') {
+			oldCtr++;
+		}else{
+			newString[newCtr] = string[oldCtr];
+			newCtr++;
+			oldCtr++;
+		}
+	}
+
+	return newString;
+}
+
 char** stringSplit(char* string) {
-	char** stringArray = calloc(20, sizeof(char*));
+	char** stringArray = calloc(50, sizeof(char*));
 	size_t counter1 = 0;
 	size_t counter2 = 0;
 	size_t counter3 = 0;
@@ -74,7 +93,7 @@ struct graphNode** reader(FILE* q) {
        	char input  = ' ';
        	char* line;
        	char* buffer = calloc(BUF_SIZE, sizeof(char));
-       	lines* linesArray = (lines*)calloc(50, sizeof(lines)); 
+       	lines* linesArray = (lines*)calloc(100, sizeof(lines)); 
        	input = getc(q);
 
        	int ctr = 0;
@@ -101,27 +120,25 @@ struct graphNode** reader(FILE* q) {
       		ctr = 0;
 		line = calloc(BUF_SIZE, sizeof(char));
       		strncpy(line, buffer, 100);
+		//printf("%i %s\n", lineNum, line);
       		if (line[0] == '\t') {
 			type = 0; 
       		}
       		else if ( isalpha(line[0]) || isdigit(line[0])) {
 			type = 1;
       		}
-      		else if ( line[0] == '\n' ) {
-			type = 2;
-      		}
-      		else { fprintf(stderr, "error typing\n"); }
-			if( type != 2 ) {
-      		struct lines tmp;
+		if( type == 1 || type == 0 ) {
+      			struct lines tmp;
 			tmp.type = type;
 			tmp.line = line;
-      		linesArray[lineNum] = tmp;
-      		//printf("%i",lineNum);
-      		//printf("struct content: %i,%s\n",linesArray[lineNum].type,linesArray[lineNum].line);
-			}
+      			linesArray[lineNum] = tmp;
+      			//printf("%i",lineNum);
+      			//printf("struct content: %i,%s\n",linesArray[lineNum].type,linesArray[lineNum].line);
 			lineNum++;
+		}
       		memset(buffer, 0, BUF_SIZE);
       		input = getc(q);
+		type = -1;
        	}
 
 	//for(int z = 0; z < 15; z++) {
@@ -152,6 +169,7 @@ struct graphNode** reader(FILE* q) {
                                 substringBC[strCtr] = nextString[strCtr];
                         	strCtr++;
                         }
+			//printf("%s\n", nextString);
 			if(nextString[strCtr] != colon && strCtr + 1 >= strLength){
 				perror("Error: Invalid target line.\n");
                                 exit(0);
@@ -188,8 +206,8 @@ struct graphNode** reader(FILE* q) {
 			//}
 	
 			//printf("After dependencies split.\n");
-
-			nodeArray[graphArrayCtr] = CreateGraphNode(substringBC);
+			//printf("Old string: %s, New String: %s\n", substringBC, trim(substringBC));
+			nodeArray[graphArrayCtr] = CreateGraphNode(trim(substringBC));
 
 			//printf("After node creation.\n");
 
@@ -221,7 +239,7 @@ struct graphNode** reader(FILE* q) {
 				}
 			}
 
-			//printf("After node parents are found.\n");
+		//	printf("After node parents are found.\n");
 
 			curGN = nodeArray[graphArrayCtr];
 			graphArrayCtr++;
@@ -236,6 +254,7 @@ struct graphNode** reader(FILE* q) {
 				exit(0);
 			}
 			addCommand(curGN, linesArray[i].line);
+		//	printf("after add command in type 0\n");
 		}
 	}
 
