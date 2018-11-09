@@ -9,24 +9,65 @@
 int main(int argc, char *argv[]) {
 	FILE *fp;
 	char Makefile[] = "Makefile";
-	char makefile[] = "testmakefile3";
+	char makefile[] = "makefile";
 	struct graphNode** depenGraph;
 	int arg = 0;
+	char* f = "-f";
+	char* customMakefile = NULL;
+	int custom = 0;
 	
+	//Parse arguments
 	if(argc == 2) {
-		arg = 1;
-	}else if(argc > 2) {
-		fprintf(stderr,"Too many arguments. Limit of one target.");
+		if(strcmp(argv[1], f) != 0) {
+			arg = 1;
+		}else{
+			fprintf(stderr, "Need argument for -f.");
+			exit(1);
+		}
+	}else if(argc == 3){
+		if(strcmp(argv[1], f) == 0) {
+			customMakefile = argv[2];
+			custom = 1;
+		}else if(strcmp(argv[2], f) == 0) {
+			fprintf(stderr, "Need argument for -f.");
+			exit(1);
+		}else{
+			fprintf(stderr, "Arguments not valid.");
+			exit(1);
+		}
+	}else if(argc == 4) {
+		if(strcmp(argv[1], f) == 0) {
+                        fprintf(stderr, "Invalid arguments.");
+                }else if(strcmp(argv[2], f) == 0) {
+			printf("4 arguments\n");
+                        customMakefile = argv[3];
+			arg = 1;
+			custom = 1;
+                }else{
+                        fprintf(stderr, "Arguments not valid.");
+                        exit(1);
+                }
+	}else if(argc > 4) {
+		fprintf(stderr,"Too many arguments.");
 		exit(1);
 	}
 
-	fp = fopen(makefile, "r");
-	if(fp == NULL) {
-		fp = fopen(Makefile, "r");
+	if(custom == 0) {
+		fp = fopen(makefile, "r");
 		if(fp == NULL) {
-			fprintf(stderr,"No makefile found.");
-			exit(1);
+			fp = fopen(Makefile, "r");
+			if(fp == NULL) {
+				fprintf(stderr,"No makefile found.");
+				exit(1);
+			}
 		}
+	}else{
+		printf("Custom makefile: %s, argument: %s\n", customMakefile, argv[arg]);
+		fp = fopen(customMakefile, "r");
+                if(fp == NULL) {
+                	fprintf(stderr,"No makefile found.");
+                        exit(1);
+                }
 	}
 
 	//Pass to parsing.
@@ -36,7 +77,7 @@ int main(int argc, char *argv[]) {
 	checkCycles(depenGraph);
 	//printf("After cycles\n");
 	//Pass the specific target to build.
-	if(argc == 2) {
+	if(argc == 2 || argc == 4) {
 		runTarget(depenGraph, argv[arg]);
 	}else{
 		runTarget(depenGraph, NULL);
