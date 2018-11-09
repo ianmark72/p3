@@ -25,7 +25,7 @@ struct graphNode* CreateGraphNode(char* nameP) {
 	gn->arrayPos = 0;
 	gn->commandSize = 0;
 	gn->name = nameP;
-	gn->command = calloc(10, sizeof(char*));
+	gn->command = calloc(20, sizeof(char*));
 
 	return gn;
 }

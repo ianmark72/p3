@@ -94,6 +94,7 @@ struct graphNode** reader(FILE* q) {
        	char* line;
        	char* buffer = calloc(BUF_SIZE, sizeof(char));
        	lines* linesArray = (lines*)calloc(100, sizeof(lines)); 
+	input = getc(q);
 
        	int ctr = 0;
        	int lineNum =0;
@@ -119,6 +120,7 @@ struct graphNode** reader(FILE* q) {
       		ctr = 0;
 		line = calloc(BUF_SIZE, sizeof(char));
       		strncpy(line, buffer, 100);
+		//printf("%s\n", line);
 		//printf("%i %s\n", lineNum, line);
       		if (line[0] == '\t') {
 			type = 0; 
