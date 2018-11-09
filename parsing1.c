@@ -53,7 +53,7 @@ char** stringSplit(char* string) {
 	size_t counter3 = 0;
 	const int BUF_SIZE = 1024;
 	const char space = ' ';
-	char* tmpStr;
+	char* tmpStr = NULL;
 	char previousChar = space;
 
 	while(counter1 < (unsigned)strnlen(string, BUF_SIZE)) {
@@ -71,7 +71,7 @@ char** stringSplit(char* string) {
 		previousChar = string[counter1];
 		counter1++;
 
-		if(counter1 == (unsigned)strnlen(string, BUF_SIZE)) {
+		if(counter1 == (unsigned)strnlen(string, BUF_SIZE) && previousChar != space) {
 			stringArray[counter2] = tmpStr;
                 }
 	}
@@ -203,7 +203,7 @@ struct graphNode** reader(FILE* q) {
 			}	
 			//printf("subString after colon: %s\n", substringAC);
 			//printf("After string splitting.\n");
-			
+
 			//Split the second part of the string into an array.
 			dependencies = stringSplit(substringAC);
 

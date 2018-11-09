@@ -21,7 +21,7 @@ void execute(char* cmd ) {
     else {
         status = execvp(split[0], split);
 	if( status == -1){ 
-		fprintf(stderr, "Error executing %s\n", split);
+		fprintf(stderr, "Error executing %s\n", cmd);
 		exit(1);
 	}
     }
