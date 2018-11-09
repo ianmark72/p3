@@ -34,14 +34,14 @@ int main(int argc, char *argv[]) {
 	
 	//Check for cycles.
 	checkCycles(depenGraph);
-	printf("before run target\n");
+	
 	//Pass the specific target to build.
 	if(argc == 2) {
 		runTarget(depenGraph, argv[arg]);
 	}else{
 		runTarget(depenGraph, NULL);
 	}
-		printf("After run target\n");
+	
 	//Testing graph, DO NOT DELETE
 	int a = 0;
 	while(depenGraph[a] != NULL) {
