@@ -94,12 +94,11 @@ struct graphNode** reader(FILE* q) {
        	char* line;
        	char* buffer = calloc(BUF_SIZE, sizeof(char));
        	lines* linesArray = (lines*)calloc(100, sizeof(lines)); 
-       	input = getc(q);
 
        	int ctr = 0;
        	int lineNum =0;
 	graphNode* curGN;
-	graphNode** nodeArray = calloc(20, sizeof(graphNode*));
+	graphNode** nodeArray = calloc(100, sizeof(graphNode*));
 	int graphArrayCtr = 0;
 	char* nextString;
 	char colon = ':';
@@ -107,7 +106,7 @@ struct graphNode** reader(FILE* q) {
 	char* substringAC;
 	char** dependencies;
 
-       	while (lineNum < 50 && input != EOF) {
+       	while (input != EOF) {
        		while( input != EOF && input != '\n' ) {
 			if(ctr == 1024) {
 				printf("%i: Invalid Line: %s", lineNum, buffer);
@@ -132,15 +131,19 @@ struct graphNode** reader(FILE* q) {
 			tmp.type = type;
 			tmp.line = line;
       			linesArray[lineNum] = tmp;
-      			//printf("%i",lineNum);
+      			//printf("%i ",lineNum);
       			//printf("struct content: %i,%s\n",linesArray[lineNum].type,linesArray[lineNum].line);
 			lineNum++;
 		}
+		//printf("1\n");
       		memset(buffer, 0, BUF_SIZE);
       		input = getc(q);
 		type = -1;
-       	}
-
+		//if(input == EOF){
+		//	printf("2\n");
+		//}
+	}
+	//printf("Out of the loop\n");
 	//for(int z = 0; z < 15; z++) {
 	//	printf("struct content: %i,%s\n",linesArray[z].type,linesArray[z].line);
 	//}
@@ -151,6 +154,7 @@ struct graphNode** reader(FILE* q) {
 		//printf("inside the line loop.\n");
 		//printf("The line is of type: %i and contains string: %s\n", linesArray[i].type, linesArray[i].line);
 		if(linesArray[i].type == 1) {
+			
 			//printf("Target line.\n");
 			//Create new node in the array.
 			nodeArray[graphArrayCtr] = (graphNode*)calloc(1, sizeof(graphNode*));
@@ -239,7 +243,7 @@ struct graphNode** reader(FILE* q) {
 				}
 			}
 
-		//	printf("After node parents are found.\n");
+			//printf("After node parents are found.\n");
 
 			curGN = nodeArray[graphArrayCtr];
 			graphArrayCtr++;

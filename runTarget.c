@@ -11,12 +11,12 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
         int i = 0;
 	int target = 0;
 	struct stat statBuf;
-	int newestUpdate = 1000000000;
+	int newestUpdate = 0;
 	listNode* curLN = NULL;
 	int firstNode = 1;
 
 	
-	//printf("%s\n", curGN->name);
+	//printf("Node: %s\n", curGN->name);
 	if(curGN->childListStart != NULL) {
 		curLN = curGN->childListStart;
 		do{
@@ -37,7 +37,7 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 					
 					//printf("Checking node: %s\n", gN[i]->name);
 					stat(gN[i]->name, &statBuf);
-                        		if(newestUpdate > statBuf.st_mtime) {
+                        		if(newestUpdate < statBuf.st_mtime) {
                 	               		newestUpdate = statBuf.st_mtime;
 		                	}
 					
@@ -58,14 +58,16 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 				}
 
 				//printf("Before time check.\n");
-				if(newestUpdate > statBuf.st_mtime) {
+				if(newestUpdate < statBuf.st_mtime) {
 					newestUpdate = statBuf.st_mtime;
 				}
 			}
 			//printf("Dependency Loop: Last depen: %s, cur depen: %s\n", curGN->childListEnd->string, curLN->string);
 		}while(strcmp(curGN->childListEnd->string, curLN->string) != 0);
 	}else{
+		//printf("Inside node without dependencies\n");
 		for(int z = 0; z < curGN->commandSize; z++) {
+			//printf("%s\n", curGN->command[z]);
 			execute(curGN->command[z]);
 		}
 		return;
@@ -81,7 +83,7 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 		//printf("File: %s, found, checking update time\n", curGN->name);
 		stat(curGN->name, &statBuf);
 
-		if(newestUpdate < statBuf.st_mtime) {
+		if(newestUpdate > statBuf.st_mtime) {
 				
 			for(int y = 0; y < curGN->commandSize; y++) {
 				execute(curGN->command[y]);
@@ -99,12 +101,14 @@ void runTarget(graphNode** gN, char* target) {
 	if(target != NULL) {
 		int i = 0;
 		while(gN[i] != NULL) {
+			//printf("%s\n", gN[i]->name);
 			if(strcmp(gN[i]->name, target) == 0) {
 				curGN = gN[i];
 				break;
 			}
 			i++;
 		}
+		
 		if(curGN == NULL) {
 			perror("Error: target does not exist.");
 			exit(0);

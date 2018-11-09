@@ -31,17 +31,17 @@ int main(int argc, char *argv[]) {
 
 	//Pass to parsing.
 	depenGraph = reader(fp);
-	
+	//printf("After reader\n");	
 	//Check for cycles.
 	checkCycles(depenGraph);
-	
+	//printf("After cycles\n");
 	//Pass the specific target to build.
 	if(argc == 2) {
 		runTarget(depenGraph, argv[arg]);
 	}else{
 		runTarget(depenGraph, NULL);
 	}
-	
+	//printf("after run target\n");
 	//Testing graph, DO NOT DELETE
 	int a = 0;
 	while(depenGraph[a] != NULL) {
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 			printf("        Child %i: %s\n", c, lN->string);
 			c++;
 
-                	while(lN->child != NULL){
+              		while(lN->child != NULL){
 				lN = lN->child;
                         	printf("        Child %i: %s\n", c, lN->string);
                         	c++;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
                         listNode* lN = depenGraph[a]->parentListStart;
                         printf("        Parent %i: %s\n", d, lN->string);
                         d++;
-
+	
                         while(lN->child != NULL){
                                 lN = lN->child;
                                 printf("        Parent %i: %s\n", d, lN->string);
