@@ -39,7 +39,7 @@ void addCommand(struct graphNode* gn, char* commandP) {
 void addParent(struct graphNode* gn, char* newParent) {
 	const int numOfNodes = 1;
 
-	listNode* newLN = calloc(numOfNodes, sizeof(graphNode));
+	listNode* newLN = calloc(numOfNodes, sizeof(listNode));
 	newLN->string = newParent;
 
 	if(gn->parentListStart == NULL) {
@@ -53,7 +53,7 @@ void addParent(struct graphNode* gn, char* newParent) {
 
 void addChild(struct graphNode* gn, char* newChild) {
 	const int numOfNodes = 1;
-        listNode* newLN = calloc(numOfNodes, sizeof(graphNode));
+        listNode* newLN = calloc(numOfNodes, sizeof(listNode));
         newLN->string = newChild;
 
         if(gn->childListStart == NULL) {

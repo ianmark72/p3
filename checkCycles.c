@@ -5,24 +5,19 @@
 
 void getChildren(graphNode** gN, graphNode** sA, listNode* curLN, int ctr) {
 	int i = 0;
-	
-	//for(int k = 0; k < ctr; k++) {
-	//	printf("%i: %s\n", k, sA[k]->name);
-	//}
 
         while(gN[i] != NULL) {
-		//printf("%i: %s\n", i, gN[i]->name);
         	if(strcmp(gN[i]->name, curLN->string) == 0) {
 			for(int j = 0; j < ctr; j++) {
                         	if(strcmp(curLN->string, sA[j]->name) == 0) {
-					//printf("%s\n", curLN->string);
 					fprintf(stderr, "Error: Cycle Detected.\n");
 					exit(0);					
 				}	
                         }
+
 			sA[ctr] = gN[i];
-			//printf("StringArray entry: %s\n", sA[ctr]->name);
 			ctr++;
+
 			if(gN[i]->childListStart != NULL) {
 				getChildren(gN, sA, gN[i]->childListStart, ctr);
 			}
@@ -45,8 +40,8 @@ void getChildren(graphNode** gN, graphNode** sA, listNode* curLN, int ctr) {
                         	}
 
                         	sA[ctr] = gN[i];
-				//printf("StringArray entry: %s\n", sA[ctr]->name);
                         	ctr++;
+
 				if(gN[i]->childListStart != NULL) {
                         		getChildren(gN, sA, gN[i]->childListStart, ctr);
 				}

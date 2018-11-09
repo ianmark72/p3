@@ -15,8 +15,6 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 	listNode* curLN = NULL;
 	int firstNode = 1;
 
-	
-	//printf("Node: %s\n", curGN->name);
 	if(curGN->childListStart != NULL) {
 		curLN = curGN->childListStart;
 		do{
@@ -34,13 +32,12 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
         			if(strcmp(gN[i]->name, curLN->string) == 0) {
 					//Get dependencies.
                        			checkDependencies(gN, gN[i]);
-					
-					//printf("Checking node: %s\n", gN[i]->name);
-					stat(gN[i]->name, &statBuf);
-                        		if(newestUpdate < statBuf.st_mtime) {
-                	               		newestUpdate = statBuf.st_mtime;
-		                	}
-					
+					if (gN[i] != NULL) {	
+						stat(gN[i]->name, &statBuf);
+						if(newestUpdate < statBuf.st_mtime) {
+                	               			newestUpdate = statBuf.st_mtime;
+		                		}
+					}
 					target = 1;
 					break;
                 		}
@@ -49,7 +46,6 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 
 			//If target is not a node.
 			if(target == 0) {
-				//printf("Checking file: %s\n", curLN->string);
 				int err;
 				err = stat(curLN->string, &statBuf);
 				if(err == -1) {
@@ -57,51 +53,43 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 					exit(1);
 				}
 
-				//printf("Before time check.\n");
 				if(newestUpdate < statBuf.st_mtime) {
 					newestUpdate = statBuf.st_mtime;
 				}
 			}
-			//printf("Dependency Loop: Last depen: %s, cur depen: %s\n", curGN->childListEnd->string, curLN->string);
 		}while(strcmp(curGN->childListEnd->string, curLN->string) != 0);
 	}else{
-		//printf("Inside node without dependencies\n");
 		for(int z = 0; z < curGN->commandSize; z++) {
-			//printf("%s\n", curGN->command[z]);
 			execute(curGN->command[z]);
 		}
 		return;
 	}
 	
+	//Find file and run if necessary.
 	FILE* fp = fopen(curGN->name, "r");
         if(fp == NULL) {
-		//printf("File: %s, not found, starting commands\n", curGN->name);
 		for(int z = 0; z < curGN->commandSize; z++) {
                         execute(curGN->command[z]);
                 }
 	}else{
-		//printf("File: %s, found, checking update time\n", curGN->name);
 		stat(curGN->name, &statBuf);
-
 		if(newestUpdate > statBuf.st_mtime) {
 				
 			for(int y = 0; y < curGN->commandSize; y++) {
 				execute(curGN->command[y]);
 			}
 		}
-		//printf("After file updated: %s\n", curGN->name);
 	}
 }
 
 
 void runTarget(graphNode** gN, char* target) {
-	graphNode* curGN;
+	graphNode* curGN = NULL;
 
 	//Find target node
 	if(target != NULL) {
 		int i = 0;
 		while(gN[i] != NULL) {
-			//printf("%s\n", gN[i]->name);
 			if(strcmp(gN[i]->name, target) == 0) {
 				curGN = gN[i];
 				break;

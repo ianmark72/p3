@@ -31,7 +31,7 @@ char* trim(char* string) {
 	size_t oldCtr = 0;
 	size_t newCtr = 0;
 	const int BUF_SIZE = 1024;
-	char* newString = calloc(50, sizeof(char*));
+	char* newString = calloc(50, sizeof(char));
 
 	while(oldCtr < (unsigned)strnlen(string, BUF_SIZE)) {
 		if(string[oldCtr] == ' ') {
@@ -53,18 +53,21 @@ char** stringSplit(char* string) {
 	size_t counter3 = 0;
 	const int BUF_SIZE = 1024;
 	const char space = ' ';
-	char* tmpStr = NULL;
 	char previousChar = space;
+	char* tmpStr = NULL;
 
 	while(counter1 < (unsigned)strnlen(string, BUF_SIZE)) {
 		if(string[counter1] != space) {
 			if(counter3 == 0) {
-				tmpStr = calloc(50, sizeof(char*));
+				free(tmpStr);
+				tmpStr = calloc(BUF_SIZE, sizeof(char));
 			}
 			tmpStr[counter3] = string[counter1];
 			counter3++;
 		}else if(previousChar != space){
-			stringArray[counter2] = tmpStr;
+			stringArray[counter2] = calloc(BUF_SIZE, sizeof(char));
+                        strncpy(stringArray[counter2], tmpStr, BUF_SIZE);
+			
 			counter2++;
 			counter3 = 0;
 		}
@@ -72,15 +75,12 @@ char** stringSplit(char* string) {
 		counter1++;
 
 		if(counter1 == (unsigned)strnlen(string, BUF_SIZE) && previousChar != space) {
-			stringArray[counter2] = tmpStr;
+			stringArray[counter2] = calloc(BUF_SIZE, sizeof(char));
+			strncpy(stringArray[counter2], tmpStr, BUF_SIZE);
                 }
 	}
 
-	//int i = 0;
-	//while(stringArray[i] != NULL) {
-        //	printf("%i: %s\n", i, stringArray[i]);
-	//	i++;
-        //}
+	free(tmpStr);
 
 	return stringArray;
 }
@@ -98,7 +98,7 @@ struct graphNode** reader(FILE* q) {
 
        	int ctr = 0;
        	int lineNum =0;
-	graphNode* curGN;
+	graphNode* curGN = NULL;
 	graphNode** nodeArray = calloc(100, sizeof(graphNode*));
 	int graphArrayCtr = 0;
 	char* nextString;
@@ -120,8 +120,6 @@ struct graphNode** reader(FILE* q) {
       		ctr = 0;
 		line = calloc(BUF_SIZE, sizeof(char));
       		strncpy(line, buffer, 100);
-		//printf("%s\n", line);
-		//printf("%i %s\n", lineNum, line);
       		if (line[0] == '\t') {
 			type = 0; 
       		}
@@ -130,52 +128,40 @@ struct graphNode** reader(FILE* q) {
       		}
 		if( type == 1 || type == 0 ) {
       			struct lines tmp;
+
+			tmp.line = calloc(BUF_SIZE, sizeof(char));
+			strncpy(tmp.line, line, BUF_SIZE);
+
 			tmp.type = type;
-			tmp.line = line;
       			linesArray[lineNum] = tmp;
-      			//printf("%i ",lineNum);
-      			//printf("struct content: %i,%s\n",linesArray[lineNum].type,linesArray[lineNum].line);
 			lineNum++;
 		}
-		//printf("1\n");
+
+		free(line);
+		
       		memset(buffer, 0, BUF_SIZE);
       		input = getc(q);
 		type = -1;
-		//if(input == EOF){
-		//	printf("2\n");
-		//}
 	}
-	//printf("Out of the loop\n");
-	//for(int z = 0; z < 15; z++) {
-	//	printf("struct content: %i,%s\n",linesArray[z].type,linesArray[z].line);
-	//}
-
-	//printf("Before graph creation.\n");
-
+	
 	for(int i = 0; i < lineNum; i++) {
-		//printf("inside the line loop.\n");
-		//printf("The line is of type: %i and contains string: %s\n", linesArray[i].type, linesArray[i].line);
 		if(linesArray[i].type == 1) {
-			
-			//printf("Target line.\n");
 			//Create new node in the array.
-			nodeArray[graphArrayCtr] = (graphNode*)calloc(1, sizeof(graphNode*));
+			nodeArray[graphArrayCtr] = calloc(1, sizeof(graphNode));
 			nextString = linesArray[i].line;
-			//printf("%s\n", nextString);
-			substringBC = calloc(50, sizeof(char*));
-			substringAC = calloc(50, sizeof(char*));
+			
+			substringBC = calloc(50, sizeof(char));
+			substringAC = calloc(50, sizeof(char));
 			int ssCtr = 0;
 			int strCtr = 0;
 			int strLength = (unsigned)strnlen(nextString, BUF_SIZE);
-
-			//printf("After initialization.\n");
 
 			//Read until colon marker.
                         while(nextString[strCtr] != colon && strCtr < strLength) {
                                 substringBC[strCtr] = nextString[strCtr];
                         	strCtr++;
                         }
-			//printf("%s\n", nextString);
+			
 			if(nextString[strCtr] != colon && strCtr + 1 >= strLength){
 				perror("Error: Invalid target line.\n");
                                 exit(0);
@@ -185,10 +171,6 @@ struct graphNode** reader(FILE* q) {
 			if(strCtr + 1 != strLength ) {
 				strCtr++;
 			}
-			
-			//printf("strCtr: %i, strLength: %i\n", strCtr, strLength);
-
-			//printf("Colon split.\n");
 
 			//Read through the rest of the string after the colon.
 			while(nextString[strCtr] != colon && strCtr < strLength) {
@@ -201,21 +183,13 @@ struct graphNode** reader(FILE* q) {
 				perror("Error: Too many targets.\n");
 				exit(0);
 			}	
-			//printf("subString after colon: %s\n", substringAC);
-			//printf("After string splitting.\n");
 
 			//Split the second part of the string into an array.
 			dependencies = stringSplit(substringAC);
+			free(substringAC);
 
-			//for(int i = 0; i < sizeof(dependencies)/sizeof(dependencies[0]); i++){
-			//	printf("%i: %s\n", i, dependencies[i]);
-			//}
-	
-			//printf("After dependencies split.\n");
-			//printf("Old string: %s, New String: %s\n", substringBC, trim(substringBC));
 			nodeArray[graphArrayCtr] = CreateGraphNode(trim(substringBC));
-
-			//printf("After node creation.\n");
+			free(substringBC);
 
 			//Add dependencies to child list of node.
 			int k = 0;
@@ -224,7 +198,7 @@ struct graphNode** reader(FILE* q) {
 				k++;	
 			}
 			
-			//printf("After dependencies added.\n");
+			free(dependencies);
 
 			//Search through graphnode's children to find parents.
 			for(int l = 0; l < graphArrayCtr; l++) {
@@ -245,13 +219,9 @@ struct graphNode** reader(FILE* q) {
 				}
 			}
 
-			//printf("After node parents are found.\n");
-
 			curGN = nodeArray[graphArrayCtr];
 			graphArrayCtr++;
 		}else if(linesArray[i].type == 0) {
-			//printf("Command Line.\n");
-
 			//Get rid of the tab.
 			linesArray[i].line++;
 			//Check to make sure that the first line isn't a command.
@@ -260,9 +230,11 @@ struct graphNode** reader(FILE* q) {
 				exit(0);
 			}
 			addCommand(curGN, linesArray[i].line);
-		//	printf("after add command in type 0\n");
 		}
 	}
+
+	free(linesArray);
+	free(buffer);
 
 	return nodeArray;
 }

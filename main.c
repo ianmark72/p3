@@ -39,7 +39,6 @@ int main(int argc, char *argv[]) {
 		if(strcmp(argv[1], f) == 0) {
                         fprintf(stderr, "Invalid arguments.");
                 }else if(strcmp(argv[2], f) == 0) {
-			printf("4 arguments\n");
                         customMakefile = argv[3];
 			arg = 1;
 			custom = 1;
@@ -62,7 +61,6 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}else{
-		printf("Custom makefile: %s, argument: %s\n", customMakefile, argv[arg]);
 		fp = fopen(customMakefile, "r");
                 if(fp == NULL) {
                 	fprintf(stderr,"No makefile found.");
@@ -72,17 +70,17 @@ int main(int argc, char *argv[]) {
 
 	//Pass to parsing.
 	depenGraph = reader(fp);
-	//printf("After reader\n");	
+		
 	//Check for cycles.
 	checkCycles(depenGraph);
-	//printf("After cycles\n");
+	
 	//Pass the specific target to build.
 	if(argc == 2 || argc == 4) {
 		runTarget(depenGraph, argv[arg]);
 	}else{
 		runTarget(depenGraph, NULL);
 	}
-	//printf("after run target\n");
+	
 	//Testing graph, DO NOT DELETE
 	int a = 0;
 	while(depenGraph[a] != NULL) {
