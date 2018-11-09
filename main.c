@@ -16,16 +16,16 @@ int main(int argc, char *argv[]) {
 	if(argc == 2) {
 		arg = 1;
 	}else if(argc > 2) {
-		perror("Too many arguments. Limit of one target.");
-		exit(0);
+		fprintf(stderr,"Too many arguments. Limit of one target.");
+		exit(1);
 	}
 
 	fp = fopen(makefile, "r");
 	if(fp == NULL) {
 		fp = fopen(Makefile, "r");
 		if(fp == NULL) {
-			perror("No makefile found.");
-			exit(0);
+			fprintf(stderr,"No makefile found.");
+			exit(1);
 		}
 	}
 

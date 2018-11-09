@@ -53,8 +53,8 @@ void checkDependencies(graphNode** gN, graphNode* curGN) {
 				int err;
 				err = stat(curLN->string, &statBuf);
 				if(err == -1) {
-					perror("No file found.");
-					exit(0);
+					fprintf(stderr, "No file found.");
+					exit(1);
 				}
 
 				//printf("Before time check.\n");
@@ -110,8 +110,8 @@ void runTarget(graphNode** gN, char* target) {
 		}
 		
 		if(curGN == NULL) {
-			perror("Error: target does not exist.");
-			exit(0);
+			fprintf(stderr,"Error: target does not exist.");
+			exit(1);
 		}
 	}else{
 		curGN = gN[0];
