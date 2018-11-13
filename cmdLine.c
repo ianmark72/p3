@@ -25,4 +25,11 @@ void execute(char* cmd ) {
 		exit(1);
 	}
     }
+
+    int e = 0;
+    while(split[e] != NULL) {
+	free(split[e]);
+	e++;
+    }
+    free(split);
 }

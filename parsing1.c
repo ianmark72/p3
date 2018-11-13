@@ -200,25 +200,6 @@ struct graphNode** reader(FILE* q) {
 			
 			free(dependencies);
 
-			//Search through graphnode's children to find parents.
-			for(int l = 0; l < graphArrayCtr; l++) {
-				struct listNode* curNode;
-				if(nodeArray[l]->childListStart != NULL) {
-					curNode = nodeArray[l]->childListStart;
-				}
-				if(strcmp(curNode->string, nodeArray[graphArrayCtr]->name) == 0) {
-                                	addParent(nodeArray[graphArrayCtr], curNode->string);
-                                }
-				
-				//Cycle through children and find matching names.
-				while(curNode->child != NULL) {
-					curNode = curNode->child;
-					if(strcmp(curNode->string, nodeArray[graphArrayCtr]->name) == 0) {
-						addParent(nodeArray[graphArrayCtr], curNode->string);
-					}	
-				}
-			}
-
 			curGN = nodeArray[graphArrayCtr];
 			graphArrayCtr++;
 		}else if(linesArray[i].type == 0) {
@@ -231,6 +212,10 @@ struct graphNode** reader(FILE* q) {
 			}
 			addCommand(curGN, linesArray[i].line);
 		}
+	}
+
+	for(int y = 0; y < lineNum; y++) {
+		free(linesArray[y].line);
 	}
 
 	free(linesArray);

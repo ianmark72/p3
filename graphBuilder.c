@@ -12,8 +12,6 @@ typedef struct graphNode {
 	int arrayPos;
 	char** command;
 	int commandSize;
-	struct listNode* parentListStart;
-	struct listNode* parentListEnd;
 	struct listNode* childListStart;
 	struct listNode* childListEnd;
 }graphNode;
@@ -34,21 +32,6 @@ void addCommand(struct graphNode* gn, char* commandP) {
 	gn->command[gn->arrayPos] = commandP;
 	gn->arrayPos++;
 	gn->commandSize++;
-}
-
-void addParent(struct graphNode* gn, char* newParent) {
-	const int numOfNodes = 1;
-
-	listNode* newLN = calloc(numOfNodes, sizeof(listNode));
-	newLN->string = newParent;
-
-	if(gn->parentListStart == NULL) {
-		gn->parentListStart = newLN;
-		gn->parentListEnd = newLN;
-	}else{
-		gn->parentListEnd->child = newLN;
-		gn->parentListEnd = newLN;
-	}
 }
 
 void addChild(struct graphNode* gn, char* newChild) {

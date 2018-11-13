@@ -108,20 +108,6 @@ int main(int argc, char *argv[]) {
                 	}
 		}
 
-		//Print the parents of the node.
-                int d = 0;
-                if(depenGraph[a]->parentListStart != NULL) {
-                        listNode* lN = depenGraph[a]->parentListStart;
-                        printf("        Parent %i: %s\n", d, lN->string);
-                        d++;
-	
-                        while(lN->child != NULL){
-                                lN = lN->child;
-                                printf("        Parent %i: %s\n", d, lN->string);
-                                d++;
-                        }
-                }
-
 		a++;	
 	}
 }
