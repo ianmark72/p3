@@ -199,6 +199,7 @@ struct graphNode** reader(FILE* q) {
 			}
 			
 			free(dependencies);
+			free(nextString);
 
 			curGN = nodeArray[graphArrayCtr];
 			graphArrayCtr++;
@@ -211,11 +212,8 @@ struct graphNode** reader(FILE* q) {
 				exit(0);
 			}
 			addCommand(curGN, linesArray[i].line);
+			//free(linesArray[i].line);
 		}
-	}
-
-	for(int y = 0; y < lineNum; y++) {
-		free(linesArray[y].line);
 	}
 
 	free(linesArray);
